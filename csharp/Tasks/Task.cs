@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 
 namespace Tasks
@@ -11,6 +10,6 @@ namespace Tasks
 
 		public bool Done { get; set; }
 		
-		public DateOnly? Deadline { get; set; }
+		public Deadline Deadline { get; set; }
 	}
 }

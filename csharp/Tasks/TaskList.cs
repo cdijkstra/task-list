@@ -69,24 +69,30 @@ namespace Tasks
 
 		private void Today()
 		{
-			 ShowWithFiler(t => t.Deadline.HasValue &&
-			                    t.Deadline.Value == DateOnly.FromDateTime(DateTime.Today));
+			 ShowWithFilter(t => t.Deadline != null &&
+			                    t.Deadline.IsToday());
 		}
 
 		private void Deadline(string commandRest)
 		{
 			var parts = commandRest.Split(' ', 2);
 			var task = FindTaskById(parts[0]);
-			var deadline = DateOnly.ParseExact(parts[1], "dd-MM-yyyy");
-			task.Deadline = deadline;
+			try
+			{
+				task.Deadline = new Deadline(parts[1]);
+			}
+			catch (Exception e)
+			{
+				console.WriteLine(e.Message);
+			}
 		}
 
 		private void Show()
 		{
-			ShowWithFiler(task => true);
+			ShowWithFilter(task => true);
 		}
 
-		private void ShowWithFiler(Func<Task, bool> filter)
+		private void ShowWithFilter(Func<Task, bool> filter)
 		{
 			foreach (var project in tasks) {
 				console.WriteLine(project.Key);
