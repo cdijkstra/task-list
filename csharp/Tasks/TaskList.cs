@@ -43,11 +43,17 @@ namespace Tasks
 			case "show":
 				Show();
 				break;
+			case "today":
+				Show();
+				break;
 			case "add":
 				Add(commandRest[1]);
 				break;
 			case "check":
 				Check(commandRest[1]);
+				break;
+			case "deadline":
+				Deadline(commandRest[1]);
 				break;
 			case "uncheck":
 				Uncheck(commandRest[1]);
@@ -59,6 +65,11 @@ namespace Tasks
 				Error(command);
 				break;
 			}
+		}
+
+		private void Deadline(string s)
+		{
+
 		}
 
 		private void Show()

@@ -10,5 +10,7 @@ namespace Tasks
 		public string Description { get; set; }
 
 		public bool Done { get; set; }
+		
+		// public Deadline Dealine { get; set; }
 	}
 }

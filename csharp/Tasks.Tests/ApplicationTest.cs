@@ -82,6 +82,40 @@ namespace Tasks
 			Execute("quit");
 		}
 
+		[Test, Timeout(1000)]
+		public void SingleDeadlineCanBeAdded()
+		{
+			// Arrange
+			Execute("show");
+
+			Execute("add project secrets");
+			Execute("add task secrets Eat more donuts.");
+			Execute("add task secrets Destroy all humans.");
+			// Act
+			Execute("deadline 1 01-02-1994");
+			Execute("show");
+
+			ReadLines("secrets\n    [ ] 1: Eat more donuts.\n    [ ] 2: Destroy all humans.\n");
+			Execute("quit");
+		}
+
+		[Test, Timeout(1000)]
+		public void TodayCanBeExecuted()
+		{
+			// Arrange
+			Execute("show");
+
+			Execute("add project secrets");
+			Execute("add task secrets Eat more donuts.");
+			Execute("add task secrets Destroy all humans.");
+			// Act
+			Execute("deadline 1 01-02-1994");
+			Execute("today");
+
+			ReadLines("secrets\n    [ ] 1: Eat more donuts.\n    [ ] 2: Destroy all humans.\n");
+			Execute("quit");
+		}	
+
 		private void Execute(string command)
 		{
 			Read(PROMPT);
