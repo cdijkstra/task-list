@@ -11,6 +11,6 @@ namespace Tasks
 
 		public bool Done { get; set; }
 		
-		// public Deadline Dealine { get; set; }
+		public DateOnly? Deadline { get; set; }
 	}
 }

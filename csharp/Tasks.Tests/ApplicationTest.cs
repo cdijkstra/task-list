@@ -83,6 +83,16 @@ namespace Tasks
 		}
 
 		[Test, Timeout(1000)]
+		public void NonExistingCommandAbandoned()
+		{
+			// Arrange
+			Execute("nonExistingCommand");
+
+			ReadLines("I don't know what the command \"nonExistingCommand\" is.");
+			Execute("quit");
+		}
+		
+		[Test, Timeout(1000)]
 		public void SingleDeadlineCanBeAdded()
 		{
 			// Arrange
@@ -92,7 +102,7 @@ namespace Tasks
 			Execute("add task secrets Eat more donuts.");
 			Execute("add task secrets Destroy all humans.");
 			// Act
-			Execute("deadline 1 01-02-1994");
+			Execute("deadline 1 01-02-2025");
 			Execute("show");
 
 			ReadLines("secrets\n    [ ] 1: Eat more donuts.\n    [ ] 2: Destroy all humans.\n");
@@ -100,7 +110,39 @@ namespace Tasks
 		}
 
 		[Test, Timeout(1000)]
-		public void TodayCanBeExecuted()
+		public void PastDeadlineCannotBeAdded()
+		{
+			// Arrange
+			Execute("show");
+
+			Execute("add project secrets");
+			Execute("add task secrets Eat more donuts.");
+			Execute("add task secrets Destroy all humans.");
+
+			// Act
+			Execute("deadline 1 01-02-1994");
+			ReadLines("Deadline cannot be added; is in the past");
+			Execute("quit");
+		}
+		
+		// [Test, Timeout(1000)]
+		// public void DeadlineCannotBeSetOnNonexistingId()
+		// {
+		// 	// Arrange
+		// 	Execute("show");
+		//
+		// 	Execute("add project secrets");
+		// 	Execute("add task secrets Eat more donuts.");
+		// 	Execute("add task secrets Destroy all humans.");
+		//
+		// 	// Act
+		// 	Execute("deadline 10 01-02-1994");
+		// 	ReadLines("Deadline cannot be added; id does not exist");
+		// 	Execute("quit");
+		// }
+
+		[Test, Timeout(1000)]
+		public void TodayShowsTaskWithDeadlineToday()
 		{
 			// Arrange
 			Execute("show");
@@ -109,7 +151,25 @@ namespace Tasks
 			Execute("add task secrets Eat more donuts.");
 			Execute("add task secrets Destroy all humans.");
 			// Act
-			Execute("deadline 1 01-02-1994");
+			Execute("deadline 1 22-08-2024");
+			Execute("today");
+
+			ReadLines("secrets\n    [ ] 1: Eat more donuts.\n");
+			Execute("quit");
+		}	
+		
+		[Test, Timeout(1000)]
+		public void TodayShowsTasksWithDeadlineToday()
+		{
+			// Arrange
+			Execute("show");
+
+			Execute("add project secrets");
+			Execute("add task secrets Eat more donuts.");
+			Execute("add task secrets Destroy all humans.");
+			// Act
+			Execute("deadline 1 22-08-2024");
+			Execute("deadline 2 22-08-2024");
 			Execute("today");
 
 			ReadLines("secrets\n    [ ] 1: Eat more donuts.\n    [ ] 2: Destroy all humans.\n");

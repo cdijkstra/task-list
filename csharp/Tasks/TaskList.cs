@@ -44,7 +44,7 @@ namespace Tasks
 				Show();
 				break;
 			case "today":
-				Show();
+				Today();
 				break;
 			case "add":
 				Add(commandRest[1]);
@@ -67,22 +67,35 @@ namespace Tasks
 			}
 		}
 
-		private void Deadline(string s)
+		private void Today()
 		{
+			 ShowWithFiler(t => t.Deadline.HasValue &&
+			                    t.Deadline.Value == DateOnly.FromDateTime(DateTime.Today));
+		}
 
+		private void Deadline(string commandRest)
+		{
+			var parts = commandRest.Split(' ', 2);
+			var task = FindTaskById(parts[0]);
+			var deadline = DateOnly.ParseExact(parts[1], "dd-MM-yyyy");
+			task.Deadline = deadline;
 		}
 
 		private void Show()
 		{
+			ShowWithFiler(task => true);
+		}
+
+		private void ShowWithFiler(Func<Task, bool> filter)
+		{
 			foreach (var project in tasks) {
 				console.WriteLine(project.Key);
-				foreach (var task in project.Value) {
+				foreach (var task in project.Value.Where(filter)) {
 					console.WriteLine("    [{0}] {1}: {2}", (task.Done ? 'x' : ' '), task.Id, task.Description);
 				}
 				console.WriteLine();
 			}
 		}
-
 		private void Add(string commandLine)
 		{
 			var subcommandRest = commandLine.Split(" ".ToCharArray(), 2);
@@ -122,17 +135,23 @@ namespace Tasks
 
 		private void SetDone(string idString, bool done)
 		{
+			var identifiedTask = FindTaskById(idString);
+			if (identifiedTask == null) {
+				console.WriteLine("Could not find a task with an ID of {0}.", idString);
+				return;
+			}
+
+			identifiedTask.Done = done;
+		}
+
+		private Task FindTaskById(string idString)
+		{
 			int id = int.Parse(idString);
 			var identifiedTask = tasks
 				.Select(project => project.Value.FirstOrDefault(task => task.Id == id))
 				.Where(task => task != null)
 				.FirstOrDefault();
-			if (identifiedTask == null) {
-				console.WriteLine("Could not find a task with an ID of {0}.", id);
-				return;
-			}
-
-			identifiedTask.Done = done;
+			return identifiedTask;
 		}
 
 		private void Help()
